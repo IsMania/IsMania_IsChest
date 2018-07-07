@@ -53,7 +53,7 @@ public class Main extends JavaPlugin {
 		
 		skyBlockAPI = ASkyBlockAPI.getInstance();
 		
-		sql = new SqlConnection(this, "minecraft1135.omgserv.com", 3306, "bc_189505", "bc_189505", "IsMania");
+		sql = new SqlConnection(this, "minecraft1135.omgserv.com", 3306, "bc_189505", "********", "********");
 		sql.connection();
 		
 		getCommand("ischest").setExecutor(new IsChestCommand(this));
