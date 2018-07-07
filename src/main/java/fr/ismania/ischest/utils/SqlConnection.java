@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import fr.ismania.ischest.Main;
@@ -104,9 +105,10 @@ public class SqlConnection {
 
 		try {
 
-			PreparedStatement q = connection.prepareStatement("INSERT INTO ischest SET uuid = ?, ischest = ?");
+			PreparedStatement q = connection.prepareStatement("INSERT INTO ischest SET uuid = ?, name = ?, ischest = ?");
 			q.setString(1, uuid.toString());
-			q.setString(2, "");
+			q.setString(2, Bukkit.getPlayer(uuid).getName());
+			q.setString(3, "");
 			q.executeUpdate();
 			q.close();
 
@@ -153,7 +155,7 @@ public class SqlConnection {
 				String inv = rs.getString("ischest");
 
 				q.close();
-
+				
 				return main.bukkitSerialisation.fromBase64(inv);
 
 			}
@@ -166,6 +168,22 @@ public class SqlConnection {
 
 		return null;
 
+	}
+	
+	public void updateInfos(Player p) {
+		
+		try {
+
+			PreparedStatement q = connection.prepareStatement("UPDATE ischest SET name = ? WHERE uuid = ?");
+			q.setString(1, p.getName());
+			q.setString(2, p.getUniqueId().toString());
+			q.executeUpdate();
+			q.close();
+
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void insertContentOfIsChest(UUID uuid, Inventory inv) {
@@ -182,6 +200,35 @@ public class SqlConnection {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public UUID getUuidFromPlayer(String name) {
+		
+		try {
+
+			PreparedStatement q = connection.prepareStatement("SELECT * FROM ischest WHERE name = ?");
+			q.setString(1, name);
+			
+			ResultSet rs = q.executeQuery();
+
+			if(rs.next()) {
+				
+				UUID uuid = UUID.fromString(rs.getString("uuid"));
+				
+				if(uuid == null) {
+					return null;
+				}
+				
+				return uuid;
+				
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+		
 	}
 
 }

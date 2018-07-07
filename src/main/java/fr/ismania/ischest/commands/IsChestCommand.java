@@ -19,7 +19,6 @@ public class IsChestCommand implements CommandExecutor {
 	public IsChestCommand(Main main) {
 		this.main = main;
 	}
-
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if(sender instanceof Player) {
@@ -27,88 +26,51 @@ public class IsChestCommand implements CommandExecutor {
 			Player p = (Player) sender;
 
 			main.sql.connection();
-			
-			if(args.length == 1 && p.isOp()) {
-				
-				Player target = Bukkit.getPlayer(args[0]);
-				
-				if(main.skyBlockAPI.inTeam(target.getUniqueId())) {
 
-					UUID ownerUuid = main.skyBlockAPI.getTeamLeader(target.getUniqueId());
+			if(!p.getWorld().getName().equalsIgnoreCase("ASkyBlock")) {
+				p.sendMessage("§cLe IsChest n'est pas disponible dans le monde actuel !");
+				return true;
+			}
 
-					Bukkit.getLogger().info("L'admin : " + p.getName() + " à  ouvert le ischest de l'ile de : " + Bukkit.getPlayer(ownerUuid).getName());
+			if(main.skyBlockAPI.inTeam(p.getUniqueId())) {
 
-					if(main.inIsChest.contains(ownerUuid)) {
+				UUID ownerUuid = main.skyBlockAPI.getTeamLeader(p.getUniqueId());
 
-						p.sendMessage("§cUn joueur est déjà dans ce IsChest !");
+				System.out.println("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de : " + Bukkit.getPlayer(ownerUuid).getName());
 
-						return true;
-					}
+				if(main.inIsChest.contains(ownerUuid)) {
 
-					if(!main.sql.playerIsSet(ownerUuid)) {
-						main.sql.insertNewPlayer(ownerUuid);
-					}
+					p.sendMessage("§cUn joueur est déjà dans le IsChest de votre île !");
 
-					openInventory(p, ownerUuid);
-
-					main.inIsChest.add(ownerUuid);
-
-				} else {
-
-					UUID ownerUuid = main.skyBlockAPI.getIslandOwnedBy(target.getUniqueId()).getOwner();
-
-					Bukkit.getLogger().info("L'admin : " + p.getName() + " à  ouvert le ischest de l'ile de : " + target.getName());
-
-					if(!main.sql.playerIsSet(ownerUuid)) {
-						main.sql.insertNewPlayer(ownerUuid);
-					}
-
-					openInventory(p, ownerUuid);
-
-				}
-				
-			} else {
-
-				if(!p.getWorld().getName().equalsIgnoreCase("ASkyBlock")) {
-					p.sendMessage("§cLe IsChest n'est pas disponible dans le monde actuel !");
 					return true;
 				}
 
-				if(main.skyBlockAPI.inTeam(p.getUniqueId())) {
-
-					UUID ownerUuid = main.skyBlockAPI.getTeamLeader(p.getUniqueId());
-
-					Bukkit.getLogger().info("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de : " + Bukkit.getPlayer(ownerUuid).getName());
-
-					if(main.inIsChest.contains(ownerUuid)) {
-
-						p.sendMessage("§cUn joueur est déjà dans le IsChest de votre île !");
-
-						return true;
-					}
-
-					if(!main.sql.playerIsSet(ownerUuid)) {
-						main.sql.insertNewPlayer(ownerUuid);
-					}
-
-					openInventory(p, ownerUuid);
-
-					main.inIsChest.add(ownerUuid);
-
-				} else {
-
-					UUID ownerUuid = main.skyBlockAPI.getIslandOwnedBy(p.getUniqueId()).getOwner();
-
-					Bukkit.getLogger().info("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de son île");
-
-					if(!main.sql.playerIsSet(ownerUuid)) {
-						main.sql.insertNewPlayer(ownerUuid);
-					}
-
-					openInventory(p, ownerUuid);
-
+				if(!main.sql.playerIsSet(ownerUuid)) {
+					main.sql.insertNewPlayer(ownerUuid);
 				}
 
+				openInventory(p, ownerUuid);
+
+				main.inIsChest.add(ownerUuid);
+
+				main.sql.updateInfos(Bukkit.getPlayer(ownerUuid));
+
+			} else if(main.skyBlockAPI.hasIsland(p.getUniqueId())){
+
+				UUID ownerUuid = main.skyBlockAPI.getIslandOwnedBy(p.getUniqueId()).getOwner();
+
+				System.out.println("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de son île");
+
+				if(!main.sql.playerIsSet(ownerUuid)) {
+					main.sql.insertNewPlayer(ownerUuid);
+				}
+
+				openInventory(p, ownerUuid);
+
+				main.sql.updateInfos(Bukkit.getPlayer(ownerUuid));
+
+			} else {
+				sender.sendMessage("§cVous n'avez pas 'île !");
 			}
 
 		}

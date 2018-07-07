@@ -1,0 +1,7 @@
+name: IsMania_IsChest
+version: 1.0
+author: IsMania
+main: fr.ismania.ischest.Main
+commands:
+  ischest:
+  ischestverif:
