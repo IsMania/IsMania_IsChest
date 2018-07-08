@@ -36,8 +36,6 @@ public class IsChestCommand implements CommandExecutor {
 
 				UUID ownerUuid = main.skyBlockAPI.getTeamLeader(p.getUniqueId());
 
-				System.out.println("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de : " + Bukkit.getPlayer(ownerUuid).getName());
-
 				if(main.inIsChest.contains(ownerUuid)) {
 
 					p.sendMessage("§cUn joueur est déjà dans le IsChest de votre île !");
@@ -58,9 +56,7 @@ public class IsChestCommand implements CommandExecutor {
 			} else if(main.skyBlockAPI.hasIsland(p.getUniqueId())){
 
 				UUID ownerUuid = main.skyBlockAPI.getIslandOwnedBy(p.getUniqueId()).getOwner();
-
-				System.out.println("Le joueur : " + p.getName() + " à  ouvert le ischest de l'ile de son île");
-
+				
 				if(!main.sql.playerIsSet(ownerUuid)) {
 					main.sql.insertNewPlayer(ownerUuid);
 				}

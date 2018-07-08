@@ -44,9 +44,7 @@ public class IsChestVerifCommand implements CommandExecutor {
 		if(main.skyBlockAPI.inTeam(targetUuid)) {
 
 			UUID ownerUuid = main.skyBlockAPI.getTeamLeader(targetUuid);
-
-			System.out.println("[IsChest] L'admin : " + p.getName() + " à  ouvert le ischest de l'ile de : " + Bukkit.getPlayer(ownerUuid).getName());
-
+			
 			if(main.inIsChest.contains(ownerUuid)) {
 
 				p.sendMessage("§cUn joueur est déjà dans ce IsChest !");
